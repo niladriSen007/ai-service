@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: ai-service
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.7
+          max-tokens: 1500
+      embedding:
+        options:
+          model: text-embedding-3-small
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5434/pgvector-test
+    username: user
+    password: user
+    driver-class-name: org.postgresql.Driver
+logging:
+  level:
+    org.springframework.ai:
+      chat.client: DEBUG
