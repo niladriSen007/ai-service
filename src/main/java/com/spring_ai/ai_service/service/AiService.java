@@ -37,7 +37,21 @@ public class AiService {
                           Map.of("title", "Interstellar", "year", "2014","genre", "Sci-Fi")
                 )
         );
-        vectorStore.add(documents);
+//        vectorStore.add(documents);
+        vectorStore.add(springAiDocs());
+    }
+
+    public static List<Document> springAiDocs(){
+        return List.of(
+                new Document(
+                        "Spring AI is a framework that simplifies the integration of AI capabilities into Spring applications.",
+                        Map.of("title", "Spring AI Overview", "category", "Framework", "version", "1.0","knowledgeBase","ai")
+                ),
+                new Document(
+                        "The ChatClient in Spring AI allows developers to interact with various chat models seamlessly.",
+                        Map.of("title", "ChatClient Guide", "category", "Component", "version", "1.0",  "knowledgeBase","chatClient")
+                )
+        );
     }
 
     public List<Document> getSimilaritySearch(String text){
