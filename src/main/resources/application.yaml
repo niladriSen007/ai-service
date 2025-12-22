@@ -3,7 +3,7 @@ spring:
     name: ai-service
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY}
+      api-key: "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"
       chat:
         options:
           model: gpt-4o-mini

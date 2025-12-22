@@ -23,4 +23,15 @@ public class RagServiceTests {
         String res = ragService.askAi("What is Spring ai service?");
         System.out.println(res);
     }
+
+    @Test
+    public void inngestPdfDataToVectorStore() {
+        ragService.inngestPdfToVectorStore();
+    }
+
+    @Test
+    public void askAiAboutPdf() {
+        String res = ragService.askAiAboutPdf("I am not able to login so what to do now");
+        System.out.println(res);
+    }
 }
