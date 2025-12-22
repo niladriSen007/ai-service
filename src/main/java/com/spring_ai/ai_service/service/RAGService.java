@@ -77,7 +77,7 @@ public class RAGService {
                 Context:
                 {context}
                 
-                Answer in a friendly, conversational tone.
+                Answer in a friendly, conversational tone and nice gesture.
                 """;
 
         List<Document> documents = vectorStore.similaritySearch(
