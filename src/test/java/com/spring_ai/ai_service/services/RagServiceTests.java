@@ -34,4 +34,10 @@ public class RagServiceTests {
         String res = ragService.askAiAboutPdf("I am not able to login so what to do now");
         System.out.println(res);
     }
+
+    @Test
+    public void askAiAdvisor() {
+        String res = ragService.askAiByAdvisor("What is my name","user12345");
+        System.out.println(res);
+    }
 }

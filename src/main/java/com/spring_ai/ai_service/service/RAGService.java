@@ -1,8 +1,14 @@
 package com.spring_ai.ai_service.service;
 
 
+import com.spring_ai.ai_service.advisor.TokenUsageAdvisor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.SafeGuardAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.VectorStoreChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
@@ -23,6 +29,7 @@ public class RAGService {
 
     private final VectorStore vectorStore;
     private final ChatClient chatClient;
+    private final ChatMemory chatMemory;
 
     @Value("classpath:faq.pdf")
     Resource faqPdfResource;
@@ -87,6 +94,40 @@ public class RAGService {
         PromptTemplate promptTemplate = new PromptTemplate(template);
         String SYSTEM_PROMPT = promptTemplate.render(Map.of("context", context));
         return chatClient.prompt().system(SYSTEM_PROMPT).user(question).call().content();
+    }
+
+    public String askAiByAdvisor(String question, String userId) {
+        return chatClient.prompt()
+                .system("""
+                            You are a helpful assistant.
+                            Answer the question based on the context provided.
+                            If the answer is not present, say "I don't know".
+                            Your name is Pody and if you know the user name from the previous context then greet the user with his name.
+                        """)
+                .user(question)
+                .advisors(
+                        SafeGuardAdvisor.builder().sensitiveWords(List.of(
+                                // case sensitive
+                                "password", "ssn", "credit card", "address", "politics", "religion", "hate speech"
+                        )).build(),
+                        TokenUsageAdvisor.builder().build(),
+                        MessageChatMemoryAdvisor.builder(chatMemory)
+                                .conversationId(userId)
+                                .build(),
+                        VectorStoreChatMemoryAdvisor.builder(vectorStore)
+                                .conversationId(userId)
+                                .build(),
+                        QuestionAnswerAdvisor.builder(vectorStore)
+                                .searchRequest(
+                                        SearchRequest.builder()
+                                                .filterExpression("file_name == 'faq.pdf'")
+                                                .topK(3)
+                                                .build()
+                                )
+                                .build()
+                )
+                .call()
+                .content();
     }
 
 }

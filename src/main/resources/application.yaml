@@ -15,6 +15,12 @@ spring:
     vectorstore:
       pgvector:
         initialize-schema: true
+    chat:
+      memory:
+        repository:
+          jdbc:
+            initialize-schema: always
+            table-name: chat_memory
   jpa:
     hibernate:
       ddl-auto: update
